@@ -4,5 +4,9 @@ name = "rocket-study"
 version = "0.1.0"
 
 [dependencies]
-rocket = {version = "0.5.1", features = ["json"]}
+rocket = {version = "0.5.1", features = ["json", "http2", "uuid"]}
 serde = {version = "1.0.210", features = ["derive"]}
+
+[dependencies.uuid]
+features = ["v1", "v4"]
+version = "1"
