@@ -1,7 +1,8 @@
 [package]
+edition = "2021"
 name = "rocket-study"
 version = "0.1.0"
-edition = "2021"
 
 [dependencies]
-rocket = "0.5.1"
+rocket = {version = "0.5.1", features = ["json"]}
+serde = {version = "1.0.210", features = ["derive"]}
