@@ -19,7 +19,7 @@ struct NotFound {
 #[catch(404)]
 fn not_found(req: &Request) -> Json<NotFound> {
     Json(NotFound {
-        message: format!("Not found"),
+        message: "Not found".to_string(),
         debug: format!("{}", req.uri()),
     })
 }
@@ -34,7 +34,7 @@ fn index() -> (http::Status, Json<IndexResult>) {
     (
         http::Status::Ok,
         Json(IndexResult {
-            message: format!("hello world!"),
+            message: "hello world!".to_string(),
         }),
     )
 }
