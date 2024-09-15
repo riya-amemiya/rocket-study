@@ -13,10 +13,12 @@ extern crate rocket;
 
 #[get("/")]
 fn index() -> (http::Status, Json<IndexResult>) {
-    let data = IndexResult {
-        message: format!("hello world!"),
-    };
-    (http::Status::Ok, Json(data))
+    (
+        http::Status::Ok,
+        Json(IndexResult {
+            message: format!("hello world!"),
+        }),
+    )
 }
 
 #[launch]
