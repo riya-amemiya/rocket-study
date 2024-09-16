@@ -18,13 +18,16 @@ release: lint
 	$(CARGO) build --release
 
 # アプリケーションの起動
-run: build
+run:
 	$(CARGO) run
+
+run-watch:
+	$(CARGO)-watch -x run
 
 # Lintの実行（自動修正なし）
 lint:
 	$(CLIPPY) -- -D warnings
 
 # Lintの自動修正（明示的に実行する場合のみ）
-fix-lint:
+lint-fix:
 	$(CLIPPY) --fix
