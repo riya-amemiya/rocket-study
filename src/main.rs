@@ -12,16 +12,33 @@ extern crate rocket;
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
+struct DebugInfo {
+    method: String,
+    uri: String,
+    headers: Vec<(String, String)>,
+}
+
+#[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
 struct NotFound {
     message: String,
-    debug: String,
+    debug: DebugInfo,
 }
 
 #[catch(404)]
 fn not_found(req: &Request) -> Json<NotFound> {
+    let headers = req
+        .headers()
+        .iter()
+        .map(|h| (h.name().to_string(), h.value().to_string()))
+        .collect();
     Json(NotFound {
         message: "Not found".to_string(),
-        debug: format!("{}", req.uri()),
+        debug: DebugInfo {
+            method: req.method().as_str().to_string(),
+            uri: req.uri().path().to_string(),
+            headers,
+        },
     })
 }
 
