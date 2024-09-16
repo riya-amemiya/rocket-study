@@ -4,6 +4,7 @@ use rocket::{
 };
 
 #[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
 pub struct GetUuidV4Result {
     message: String,
 }

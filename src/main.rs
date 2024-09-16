@@ -11,6 +11,7 @@ use rocket::{
 extern crate rocket;
 
 #[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
 struct NotFound {
     message: String,
     debug: String,
@@ -25,6 +26,7 @@ fn not_found(req: &Request) -> Json<NotFound> {
 }
 
 #[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
 struct IndexResult {
     message: String,
 }
@@ -39,12 +41,15 @@ fn index() -> (http::Status, Json<IndexResult>) {
     )
 }
 
-#[launch]
-fn rocket() -> _ {
-    rocket::build()
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    let _ = rocket::build()
         .mount(
             "/",
             routes![index, get_uuid_v4_handler, get_uuids_v4_handler],
         )
         .register("/", catchers![not_found])
+        .launch()
+        .await?;
+    Ok(())
 }
