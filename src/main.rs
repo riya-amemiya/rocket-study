@@ -63,7 +63,13 @@ async fn main() -> Result<(), rocket::Error> {
     let _ = rocket::build()
         .mount(
             "/",
-            routes![index, get_uuid_v4_handler, get_uuids_v4_handler],
+            routes![
+                index,
+                get_uuid_v4_handler,
+                get_uuids_v4_handler,
+                get_uuid_v7_handler,
+                get_uuids_v7_handler
+            ],
         )
         .register("/", catchers![not_found])
         .launch()

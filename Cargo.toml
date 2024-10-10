@@ -7,5 +7,5 @@ version = "0.1.0"
 rocket = {version = "0.5.1", features = ["json", "http2", "uuid"]}
 
 [dependencies.uuid]
-features = ["v1", "v4"]
+features = ["v1", "v4", "v7"]
 version = "1"
