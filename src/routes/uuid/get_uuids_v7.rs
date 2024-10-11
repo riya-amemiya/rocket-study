@@ -2,13 +2,19 @@ use rocket::{
     http,
     serde::{json::Json, uuid::Uuid, Serialize},
 };
+use utoipa::ToSchema;
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 #[serde(crate = "rocket::serde")]
 pub struct GetUuidsV7Result {
     messages: Vec<String>,
 }
 
+#[utoipa::path(
+    responses(
+        (status = 200, description = "Get UUID v7 result.", body = [GetUuidsV7Result])
+    )
+)]
 #[get("/getUuidsV7/<range>")]
 pub fn get_uuids_v7_handler(range: i32) -> (http::Status, Json<GetUuidsV7Result>) {
     (

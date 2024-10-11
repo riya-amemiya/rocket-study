@@ -1,3 +1,5 @@
+use utoipa::{OpenApi, ToSchema};
+use utoipa_swagger_ui::SwaggerUi;
 mod routes;
 use routes::*;
 
@@ -42,12 +44,18 @@ fn not_found(req: &Request) -> Json<NotFound> {
     })
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, ToSchema)]
 #[serde(crate = "rocket::serde")]
 struct IndexResult {
     message: String,
 }
 
+#[utoipa::path(
+        context_path = "",
+        responses(
+            (status = 200, description = "Index result.", body = [IndexResult])
+        )
+)]
 #[get("/")]
 fn index() -> (http::Status, Json<IndexResult>) {
     (
@@ -60,6 +68,24 @@ fn index() -> (http::Status, Json<IndexResult>) {
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
+    #[derive(OpenApi)]
+    #[openapi(
+        paths(
+            index,
+            get_uuid_v4_handler,
+            get_uuids_v4_handler,
+            get_uuid_v7_handler,
+            get_uuids_v7_handler
+        ),
+        components(
+            schemas(IndexResult,GetUuidV4Result,GetUuidsV4Result,GetUuidV7Result,GetUuidsV7Result)
+        ),
+        tags(
+            (name = "index", description = "Todo management endpoints.")
+        ),
+    )]
+    struct ApiDoc;
+
     let _ = rocket::build()
         .mount(
             "/",
@@ -70,6 +96,10 @@ async fn main() -> Result<(), rocket::Error> {
                 get_uuid_v7_handler,
                 get_uuids_v7_handler
             ],
+        )
+        .mount(
+            "/",
+            SwaggerUi::new("/swagger-ui/<_..>").url("/api-docs/openapi.json", ApiDoc::openapi()),
         )
         .register("/", catchers![not_found])
         .launch()
