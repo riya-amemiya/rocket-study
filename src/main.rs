@@ -1,3 +1,5 @@
+use std::env;
+
 use utoipa::{OpenApi, ToSchema};
 use utoipa_swagger_ui::SwaggerUi;
 mod routes;
@@ -85,6 +87,15 @@ async fn main() -> Result<(), rocket::Error> {
         ),
     )]
     struct ApiDoc;
+    let mut doc = ApiDoc::openapi();
+    let server_url = env::var("SERVER_URL").unwrap_or_else(|_| "http://localhost:8000".to_string());
+    let servers = [server_url];
+    doc.servers = Some(
+        servers
+            .iter()
+            .map(|x| utoipa::openapi::Server::new(x))
+            .collect::<Vec<_>>(),
+    );
 
     let _ = rocket::build()
         .mount(
@@ -99,7 +110,7 @@ async fn main() -> Result<(), rocket::Error> {
         )
         .mount(
             "/",
-            SwaggerUi::new("/swagger-ui/<_..>").url("/api-docs/openapi.json", ApiDoc::openapi()),
+            SwaggerUi::new("/swagger-ui/<_..>").url("/api-docs/openapi.json", doc),
         )
         .register("/", catchers![not_found])
         .launch()
