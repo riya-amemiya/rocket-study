@@ -6,13 +6,37 @@ mod routes;
 use routes::*;
 
 use rocket::{
+    fairing::{Fairing, Info, Kind},
     http,
+    http::Header,
     serde::{json::Json, Serialize},
-    Request,
+    Request, Response,
 };
 
 #[macro_use]
 extern crate rocket;
+
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
@@ -87,6 +111,7 @@ async fn main() -> Result<(), rocket::Error> {
         ),
     )]
     struct ApiDoc;
+
     let mut doc = ApiDoc::openapi();
     let server_url = env::var("SERVER_URL").unwrap_or_else(|_| "http://localhost:8000".to_string());
     let servers = [server_url];
@@ -98,6 +123,7 @@ async fn main() -> Result<(), rocket::Error> {
     );
 
     let _ = rocket::build()
+        .attach(CORS)
         .mount(
             "/",
             routes![
