@@ -12,7 +12,7 @@ pub struct GetUuidV4Result {
 
 #[utoipa::path(
     responses(
-        (status = 200, description = "Get UUID v4 result.", body = [GetUuidV4Result])
+        (status = 200, description = "Get UUID v4 result.", body = GetUuidV4Result)
     )
 )]
 #[get("/getUuidV4")]
