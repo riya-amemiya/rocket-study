@@ -103,9 +103,6 @@ async fn main() -> Result<(), rocket::Error> {
             get_uuid_v7_handler,
             get_uuids_v7_handler
         ),
-        components(
-            schemas(IndexResult,GetUuidV4Result,GetUuidsV4Result,GetUuidV7Result,GetUuidsV7Result)
-        ),
         tags(
             (name = "index", description = "Todo management endpoints.")
         ),
