@@ -258,8 +258,8 @@ pub struct GetCalculatorErrorResult {
 
 #[utoipa::path(
     responses(
-        (status = 200, description = "Get Calculator result.", body = [GetCalculatorSuccessResult]),
-        (status = 400, description = "Bad request.", body = [GetCalculatorErrorResult])
+        (status = 200, description = "Get Calculator result.", body = GetCalculatorSuccessResult),
+        (status = 400, description = "Bad request.", body = GetCalculatorErrorResult)
     )
 )]
 #[get("/calculator?<expression>")]
