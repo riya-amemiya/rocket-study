@@ -2,7 +2,7 @@ FROM rust:1.82
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y llvm-19-dev libclang-19-dev
+RUN apt-get update && apt-get install -y llvm-18-dev libclang-18-dev
 
 COPY . .
 
