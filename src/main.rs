@@ -101,7 +101,8 @@ async fn main() -> Result<(), rocket::Error> {
             get_uuid_v4_handler,
             get_uuids_v4_handler,
             get_uuid_v7_handler,
-            get_uuids_v7_handler
+            get_uuids_v7_handler,
+            calculator_index
         ),
         tags(
             (name = "index", description = "Todo management endpoints.")
@@ -110,7 +111,7 @@ async fn main() -> Result<(), rocket::Error> {
     struct ApiDoc;
 
     let mut doc = ApiDoc::openapi();
-    let server_url = env::var("SERVER_URL").unwrap_or_else(|_| "http://localhost:8000".to_string());
+    let server_url = env::var("SERVER_URL").unwrap_or_else(|_| "http://localhost:3001".to_string());
     let servers = [server_url];
     doc.servers = Some(
         servers
@@ -128,7 +129,8 @@ async fn main() -> Result<(), rocket::Error> {
                 get_uuid_v4_handler,
                 get_uuids_v4_handler,
                 get_uuid_v7_handler,
-                get_uuids_v7_handler
+                get_uuids_v7_handler,
+                calculator_index
             ],
         )
         .mount(
