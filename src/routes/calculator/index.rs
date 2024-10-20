@@ -271,8 +271,14 @@ pub fn calculator_index(
 > {
     // 入力された数式を取得
     let input = &expression;
+    // 先頭が-で始まる場合、0を追加
+    let input = if input.starts_with('-') {
+        format!("0{}", input)
+    } else {
+        input.to_string()
+    };
     // パーサーを作成し、数式を解析
-    let mut parser = Parser::new(input);
+    let mut parser = Parser::new(&input);
     let expr = match parser.parse() {
         Ok(expr) => expr,
         Err(err) => {
