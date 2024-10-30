@@ -1,3 +1,4 @@
+use sea_orm::Database;
 use std::env;
 
 use utoipa::{OpenApi, ToSchema};
@@ -12,6 +13,9 @@ use rocket::{
     serde::{json::Json, Serialize},
     Request, Response,
 };
+
+const DATABASE_URL: &str =
+    "postgresql://postgres:fnWweFmVePXpHnEChqbdAMwBLUBUQrVZ@junction.proxy.rlwy.net:40615/railway";
 
 #[macro_use]
 extern crate rocket;
@@ -119,6 +123,15 @@ async fn main() -> Result<(), rocket::Error> {
             .map(|x| utoipa::openapi::Server::new(x))
             .collect::<Vec<_>>(),
     );
+
+    let db = Database::connect(DATABASE_URL).await.map_err(|e| {
+        println!("Database connection error: {:?}", e);
+        rocket::Error::from(rocket::error::ErrorKind::Io(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "Database connection error",
+        )))
+    })?;
+    println!("{:?}", db);
 
     let _ = rocket::build()
         .attach(CORS)
