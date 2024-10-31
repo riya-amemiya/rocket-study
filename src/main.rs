@@ -14,8 +14,7 @@ use rocket::{
     Request, Response,
 };
 
-const DATABASE_URL: &str =
-    "postgresql://postgres:fnWweFmVePXpHnEChqbdAMwBLUBUQrVZ@junction.proxy.rlwy.net:40615/railway";
+const DATABASE_URL: &str = "";
 
 #[macro_use]
 extern crate rocket;
