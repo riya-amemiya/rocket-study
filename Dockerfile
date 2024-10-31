@@ -12,6 +12,8 @@ RUN echo "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-19 main" >> 
 # プロジェクトファイルをコピー
 COPY . .
 
+RUN cargo run --manifest-path ./migration/Cargo.toml -- up
+
 # リリースビルドを行う
 RUN cargo build --release
 
