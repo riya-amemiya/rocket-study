@@ -119,7 +119,7 @@ fn index() -> (http::Status, Json<IndexResult>) {
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
-    dotenv().expect(".env file not found");
+    dotenv().ok();
     #[derive(OpenApi)]
     #[openapi(
         paths(
