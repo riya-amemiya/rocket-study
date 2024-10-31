@@ -14,7 +14,9 @@ use rocket::{
     Request, Response,
 };
 
-const DATABASE_URL: &str = "";
+fn get_database_url() -> Result<String, env::VarError> {
+    env::var("DATABASE_URL")
+}
 
 #[macro_use]
 extern crate rocket;
@@ -123,7 +125,15 @@ async fn main() -> Result<(), rocket::Error> {
             .collect::<Vec<_>>(),
     );
 
-    let db = Database::connect(DATABASE_URL).await.map_err(|e| {
+    let database_url = get_database_url().map_err(|e| {
+        eprintln!("環境変数 'DATABASE_URL' が設定されていません: {}", e);
+        rocket::Error::from(rocket::error::ErrorKind::Io(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "DATABASE_URL environment variable is not set",
+        )))
+    })?;
+
+    let db = Database::connect(database_url).await.map_err(|e| {
         println!("Database connection error: {:?}", e);
         rocket::Error::from(rocket::error::ErrorKind::Io(std::io::Error::new(
             std::io::ErrorKind::Other,
