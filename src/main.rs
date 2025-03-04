@@ -1,8 +1,10 @@
+use sea_orm::{ConnectionTrait, Database, DatabaseConnection, DbBackend, DbErr};
 use std::env;
 
 use utoipa::{OpenApi, ToSchema};
 use utoipa_swagger_ui::SwaggerUi;
 mod routes;
+use dotenvy::dotenv;
 use routes::*;
 
 use rocket::{
@@ -12,6 +14,29 @@ use rocket::{
     serde::{json::Json, Serialize},
     Request, Response,
 };
+
+fn get_database_url() -> Result<String, env::VarError> {
+    env::var("DATABASE_URL")
+}
+
+async fn set_up_db() -> Result<DatabaseConnection, DbErr> {
+    let database_url = get_database_url().map_err(|e| {
+        eprintln!("環境変数 'DATABASE_URL' が設定されていません: {}", e);
+        DbErr::Custom(format!(
+            "DATABASE_URL environment variable is not set: {}",
+            e
+        ))
+    })?;
+    let db = Database::connect(&database_url).await?;
+
+    let db = match db.get_database_backend() {
+        DbBackend::MySql => db,
+        DbBackend::Postgres => db,
+        DbBackend::Sqlite => db,
+    };
+
+    Ok(db)
+}
 
 #[macro_use]
 extern crate rocket;
@@ -94,6 +119,7 @@ fn index() -> (http::Status, Json<IndexResult>) {
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
+    dotenv().ok();
     #[derive(OpenApi)]
     #[openapi(
         paths(
@@ -119,6 +145,12 @@ async fn main() -> Result<(), rocket::Error> {
             .map(|x| utoipa::openapi::Server::new(x))
             .collect::<Vec<_>>(),
     );
+
+    let db = match set_up_db().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+    println!("{:?}", db);
 
     let _ = rocket::build()
         .attach(CORS)
